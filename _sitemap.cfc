@@ -1,12 +1,14 @@
-<!--- 
+<!---
 	Sitemap 1.1
 	@description:
 		Spider to create site navigation tree in query format or xml google sitemap format.
 	@author:
 		merlinox
 	@dateLastMod:
+		1.4 - 2007/09/08
+			 Added MSN to pinging
 		1.3 - 2007/09/05
-			 Added a submitting sitemap.xml pinging function for Yahoo, Google, and AskJeeves.
+			 Added a submitting sitemap.xml pinging function for Yahoo, Google, and Ask.
 			 Updated the xml
 		1.2 - 2006/07/11
 			insertion of the title it of the page in the xml of the contents
@@ -271,9 +273,14 @@ then the below pages
 	Submits sitemap.xml to Ask.com, Google, and Yahoo
 	">
 		<cfargument name="url" required="yes" type="string" hint="Location of sitemap.xml (es.: http://www.domain.com/sitemap.xml)">
+		<!--- Ask.com --->
 		<cfhttp url="http://submissions.ask.com/ping?sitemap=#urlencodedformat(url, "utf-8")#" >
+		<!--- Google --->
 		<cfhttp url="http://www.google.com/webmasters/sitemaps/ping?sitemap=#urlencodedformat(url, "utf-8")#">
+		<!--- Yahoo --->
 		<cfhttp url="http://search.yahooapis.com/SiteExplorerService/V1/updateNotification?appid=YahooDemo&url=#url#">
+		<!--- MSN (moreover.com for inclusion within the MSN Content Search)--->
+		<cfhttp url="http://api.moreover.com/ping?u=#url#">
 	</cffunction>
 </cfcomponent>
 
