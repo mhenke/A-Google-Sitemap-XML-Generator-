@@ -10,7 +10,7 @@
 
 	<cffile
     action = "write"
-    file = "#GetDirectoryFromPath(GetCurrentTemplatePath())#sitemap.xml"
+    file = "#ini_sitemap#"
     output = "#sitemap#"
     addNewLine = "no"
     charset = "utf-8">
