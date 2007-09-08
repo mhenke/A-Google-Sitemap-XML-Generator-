@@ -4,12 +4,13 @@
 		Spider to create site navigation tree in query format or xml google sitemap format.
 	@author:
 		merlinox
+	@project site: http://googlesitemapxmlgenerator.riaforge.org/
 	@dateLastMod:
 		1.4 - 2007/09/08
 			 Added MSN to pinging
 		1.3 - 2007/09/05
 			 Added a submitting sitemap.xml pinging function for Yahoo, Google, and Ask.
-			 Updated the xml
+			 Updated the sitemap protocal and made sure the xml validates
 		1.2 - 2006/07/11
 			insertion of the title it of the page in the xml of the contents
 		1.1 - 2006/01/30
