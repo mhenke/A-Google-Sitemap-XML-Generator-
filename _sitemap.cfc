@@ -8,6 +8,7 @@
 	@dateLastMod:
 		1.4 - 2007/09/08
 			 Added MSN to pinging
+			 Added XML Validation Results against www.w3.org
 		1.3 - 2007/09/05
 			 Added a submitting sitemap.xml pinging function for Yahoo, Google, and Ask.
 			 Updated the sitemap protocal and made sure the xml validates
@@ -283,5 +284,28 @@ then the below pages
 		<!--- MSN (moreover.com for inclusion within the MSN Content Search)--->
 		<cfhttp url="http://api.moreover.com/ping?u=#url#">
 	</cffunction>
+	
+		<cffunction name="validateSitemap" access="remote" output="false" description="
+	XML Validation Results against www.w3.org
+	">
+		<cfargument name="url" required="yes" type="string" hint="Location of sitemap.xml (es.: http://www.domain.com/sitemap.xml)">
+		<cfset errorMessage = "No Errors with sitemap.xml Validation">
+		<!--- w3.org --->
+		<cfhttp url="http://www.w3.org/2001/03/webdata/xsv?docAddrs=#urlencodedformat(url, "utf-8")#&warnings=on&keepGoing=on&style=xsl##" result="pageResult">
+		
+		<cfif pageResult.FileContent contains (de('schemaErrors="0"'))>
+			<cfset errorMessage = "No schema-validity error">
+		</cfif>
+		
+		<cfif pageResult.FileContent contains (de('instanceErrors="0"'))>
+			<cfset errorMessage = "">
+		</cfif>
+		
+		<cfif pageResult.FileContent contains (de('outcome="success"'))>
+			<cfset errorMessage = "Attempt to load a schema document failed">
+		</cfif>
+		
+		<cfreturn errorMessage>
+		</cffunction>
 </cfcomponent>
 

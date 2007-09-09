@@ -7,10 +7,13 @@
 	<cfinvoke component="example.path.to.cfc._sitemap" method="indexIt" returnvariable="qry_sitemapIndex" root="#ini_root#" query="#qry_sitemap#">
 	<cfinvoke component="example.path.to.cfc._sitemap" method="googleSitemap" returnvariable="sitemap" root="#ini_root#" query="#qry_sitemap#">
 	<cfinvoke component="example.path.to.cfc._sitemap" method="submitSitemap" url="#ini_sitemap#" returnvariable="qry_sitemap" >
-
+	<cfinvoke component="example.path.to.cfc._sitemap" method="validateSitemap" url="#ini_sitemap#" returnvariable="pageResult" >
+	
 	<cffile
     action = "write"
-    file = "#ini_sitemap#"
+    file = "C:\PHYSICAL\PATH_TO\sitemap.xml"
     output = "#sitemap#"
     addNewLine = "no"
     charset = "utf-8">
+	
+	<cfcontent type="text/xml" reset="Yes" /> <cfoutput>#pageResult#</cfoutput>
