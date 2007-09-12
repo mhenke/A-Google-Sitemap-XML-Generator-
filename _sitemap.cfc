@@ -2,10 +2,15 @@
 	Sitemap 1.1
 	@description:
 		Spider to create site navigation tree in query format or xml google sitemap format.
-	@author:
+	@orginal author:
 		merlinox
+	@current updater:
+		mike henke
 	@project site: http://googlesitemapxmlgenerator.riaforge.org/
 	@dateLastMod:
+		1.32 - 2007/09/11
+			 Added blogsearch.google.com pinging
+			 Corrected an external link check issue
 		1.31 - 2007/09/08
 			 Added MSN to pinging
 		1.3 - 2007/09/05
@@ -100,22 +105,25 @@ then the below pages
 				WHERE page = '#link#'
 			</cfquery>
 			<cfif qry_check.recordCount is 0>
-				<cfif 	(len(link) gt 5) and
-						(link does not contain "://") and
-						(link does not contain "mailto:") and
-						(link does not contain "javascript:") >
-
+			<!--- check fully qualified link and remove root --->
+			<cfif link CONTAINS root>
+				<cfset link = "#replace(link,root,de(''))#">
+			</cfif>
+	            <cfif (len(link) gt 5) and
+	          	(link does not contain "://") and
+  	            (link does not contain "mailto:") and
+	            (link does not contain "javascript:") >
 					<!--- sava match --->
-					<cfif 	not (right(link,4) is ".pdf" OR
-							right(link,4) is ".doc" OR
-							right(link,4) is ".xls" OR
-							right(link,4) is ".doc" OR
-							right(link,4) is ".txt")>
-						<cfset temp=queryAddRow(qry_pageList)>
-						<cfset temp=querySetCell(qry_pageList,"page",link)>
-						<cfset temp=querySetCell(qry_pageList,"depth",levelNew)>
-						<cfset temp=querySetCell(qry_pageList,"analyzed",0)>
-					</cfif>
+                    <cfif not (right(link,4) is ".pdf" OR
+                    	      right(link,4) is ".doc" OR
+						      right(link,4) is ".xls" OR
+                              right(link,4) is ".doc" OR
+                              right(link,4) is ".txt")>
+	                              	<cfset temp=queryAddRow(qry_pageList)>
+									<cfset temp=querySetCell(qry_pageList,"page",link)>
+                                    <cfset temp=querySetCell(qry_pageList,"depth",levelNew)>
+	                                <cfset temp=querySetCell(qry_pageList,"analyzed",0)>
+					</cfif>       
 				</cfif>
 			</cfif>
 		</cfloop>
@@ -184,7 +192,7 @@ then the below pages
 		<cfargument name="query" required="yes" type="query" hint="Result query: it needs ""page"" data column">
 		<cfargument name="root" required="yes" type="string" hint="Root of analyzed site: http + domain + path (es.: http://www.example.com/site1/page)">
 		<cfset var qry_view="">
-		<cfset var datelastmodified = "">
+
 		<!--- build sitemap xml --->
 		<cfquery name="qry_view" dbtype="query">
 			SELECT *
@@ -200,24 +208,15 @@ then the below pages
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 		<cfloop query="qry_view"><url>
-		<!--- Escaping entity characters --->
-		<cfset page = replace(page,'&','&amp;',"all")>
-		<cfset page = replace(page,,"'",'&apos;',"all")>			
-		<cfset page = replace(page,'"','&quot;',"all")>
-		<cfset page = replace(page,'>','&gt;',"all")>
-		<cfset page = replace(page,'<','&lt;',"all")>
-		
-		<loc>#root#/#page#</loc>
+		<loc>#root#/#replace(page,'&','&amp;',"all")#</loc>
 		<changefreq>daily</changefreq>
 		<priority>0.5</priority>
-		<lastmod>#DateFormat(datelastmodified,"yyyy-mm-dd")#</lastmod>
 		</url>
 		</cfloop></urlset></cfoutput>
 		</cfsavecontent>
 
 		<cfreturn sitemap>
 	</cffunction>
-
 
 	<cffunction name="indexIt" access="remote" output="false" description="
 	Spider who builds query with pages name and all texts in plain/text format
@@ -284,36 +283,15 @@ then the below pages
 	">
 		<cfargument name="url" required="yes" type="string" hint="Location of sitemap.xml (es.: http://www.domain.com/sitemap.xml)">
 		<!--- Ask.com --->
-		<cfhttp url="http://submissions.ask.com/ping?sitemap=#urlencodedformat(url, "utf-8")#" >
+		<cfhttp url="http://submissions.ask.com/ping?sitemap=#urlencodedformat(url, 'utf-8')#" >
 		<!--- Google --->
-		<cfhttp url="http://www.google.com/webmasters/sitemaps/ping?sitemap=#urlencodedformat(url, "utf-8")#">
+		<cfhttp url="http://www.google.com/webmasters/sitemaps/ping?sitemap=#urlencodedformat(url, 'utf-8')#">
 		<!--- Yahoo --->
 		<cfhttp url="http://search.yahooapis.com/SiteExplorerService/V1/updateNotification?appid=YahooDemo&url=#url#">
 		<!--- MSN (moreover.com for inclusion within the MSN Content Search)--->
 		<cfhttp url="http://api.moreover.com/ping?u=#url#">
+		<!--- blogsearch.google.com --->
+		<cfhttp url="http://blogsearch.google.com/ping?URL=#urlencodedformat(url, 'utf-8')#">
 	</cffunction>
-	
-		<cffunction name="validateSitemap" access="remote" output="false" description="
-	XML Validation Results against www.w3.org
-	">
-		<cfargument name="url" required="yes" type="string" hint="Location of sitemap.xml (es.: http://www.domain.com/sitemap.xml)">
-		<cfset errorMessage = "No Errors with sitemap.xml Validation">
-		<!--- w3.org --->
-		<cfhttp url="http://www.w3.org/2001/03/webdata/xsv?docAddrs=#urlencodedformat(url, "utf-8")#&warnings=on&keepGoing=on&style=xsl##" result="pageResult">
-		
-		<cfif pageResult.FileContent contains (de('schemaErrors="0"'))>
-			<cfset errorMessage = "No schema-validity error">
-		</cfif>
-		
-		<cfif pageResult.FileContent contains (de('instanceErrors="0"'))>
-			<cfset errorMessage = "">
-		</cfif>
-		
-		<cfif pageResult.FileContent contains (de('outcome="success"'))>
-			<cfset errorMessage = "Attempt to load a schema document failed">
-		</cfif>
-		
-		<cfreturn errorMessage>
-		</cffunction>
-</cfcomponent>
 
+</cfcomponent>
