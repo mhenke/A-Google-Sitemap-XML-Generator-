@@ -6,9 +6,8 @@
 		merlinox
 	@project site: http://googlesitemapxmlgenerator.riaforge.org/
 	@dateLastMod:
-		1.4 - 2007/09/08
+		1.31 - 2007/09/08
 			 Added MSN to pinging
-			 Added XML Validation Results against www.w3.org
 		1.3 - 2007/09/05
 			 Added a submitting sitemap.xml pinging function for Yahoo, Google, and Ask.
 			 Updated the sitemap protocal and made sure the xml validates
@@ -185,7 +184,7 @@ then the below pages
 		<cfargument name="query" required="yes" type="query" hint="Result query: it needs ""page"" data column">
 		<cfargument name="root" required="yes" type="string" hint="Root of analyzed site: http + domain + path (es.: http://www.example.com/site1/page)">
 		<cfset var qry_view="">
-
+		<cfset var datelastmodified = "">
 		<!--- build sitemap xml --->
 		<cfquery name="qry_view" dbtype="query">
 			SELECT *
@@ -201,15 +200,24 @@ then the below pages
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 		<cfloop query="qry_view"><url>
-		<loc>#root#/#replace(page,'&','&amp;',"all")#</loc>
+		<!--- Escaping entity characters --->
+		<cfset page = replace(page,'&','&amp;',"all")>
+		<cfset page = replace(page,,"'",'&apos;',"all")>			
+		<cfset page = replace(page,'"','&quot;',"all")>
+		<cfset page = replace(page,'>','&gt;',"all")>
+		<cfset page = replace(page,'<','&lt;',"all")>
+		
+		<loc>#root#/#page#</loc>
 		<changefreq>daily</changefreq>
 		<priority>0.5</priority>
+		<lastmod>#DateFormat(datelastmodified,"yyyy-mm-dd")#</lastmod>
 		</url>
 		</cfloop></urlset></cfoutput>
 		</cfsavecontent>
 
 		<cfreturn sitemap>
 	</cffunction>
+
 
 	<cffunction name="indexIt" access="remote" output="false" description="
 	Spider who builds query with pages name and all texts in plain/text format
