@@ -207,8 +207,16 @@ then the below pages
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-		<cfloop query="qry_view"><url>
-		<loc>#root#/#replace(page,'&','&amp;',"all")#</loc>
+		<cfloop query="qry_view">
+					
+			<!--- Entity Escaping --->
+			<cfset cleanURL = replace(page,'&','&amp;',"all") >
+			<cfset cleanURL = replace(cleanURL,"'",'&apos;',"all") >
+			<cfset cleanURL = replace(cleanURL,'"','&quot;',"all") >
+			<cfset cleanURL = replace(cleanURL,'>','&gt;',"all") >
+			<cfset cleanURL = replace(cleanURL,'<','&lt;',"all") >
+			<url>
+		<loc>#root#/#cleanURL#</loc>
 		<changefreq>daily</changefreq>
 		<priority>0.5</priority>
 		</url>
@@ -292,6 +300,9 @@ then the below pages
 		<cfhttp url="http://api.moreover.com/ping?u=#url#">
 		<!--- blogsearch.google.com --->
 		<cfhttp url="http://blogsearch.google.com/ping?URL=#urlencodedformat(url, 'utf-8')#">
+		<!--- Technorati --->
+		<cfhttp url="http://technorati.com/ping/?url=#urlencodedformat(url, 'utf-8')#">		
 	</cffunction>
 
 </cfcomponent>
+
