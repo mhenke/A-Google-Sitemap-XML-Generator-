@@ -1,0 +1,28 @@
+TO DO LIST
+TODO: Add Feedback as process complete on test page
+TODO: If the ping is valid, it will return a HTTP 200 OK response code.
+TODO: Add parameter to save as sitemap.xml
+TODO: Add xml validator
+TODO: Add exclusion extenstions, files, and folders
+TODO: Escaping entity characters
+Entity escaping:
+Character  	Escape Code
+Ampersand 	& 	&amp;
+Single Quote 	' 	&apos;
+Double Quote 	" 	&quot;
+Greater Than 	> 	&gt;
+Less Than 	< 	&lt;:
+
+TODO: Add lastmod option
+<lastmod>  	optional  	
+The date of last modification of the file. This date should be in W3C Datetime format. This format allows you to omit the time portion, if desired, and use YYYY-MM-DD.
+Note that this tag is separate from the If-Modified-Since (304) header the server can return, and search engines may use the information from both sources differently. 
+TODO: Add changefreq
+Change options:
+* always
+* hourly
+* daily
+* weekly
+* monthly
+* yearly
+* never
