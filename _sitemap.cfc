@@ -8,6 +8,9 @@
 		mike henke
 	@project site: http://googlesitemapxmlgenerator.riaforge.org/
 	@dateLastMod:
+		1.33 - 2007/09/13
+			 Added Escaping Entities
+			 Added Technorati.com pinging
 		1.32 - 2007/09/11
 			 Added blogsearch.google.com pinging
 			 Corrected an external link check issue
