@@ -6,7 +6,7 @@
 	<cfinvoke component="example.path.to.cfc._sitemap" method="sitemap" returnvariable="qry_sitemap" root="#ini_root#" url="#ini_startPage#" depthMax="#ini_levelMax#">
 	<cfinvoke component="example.path.to.cfc._sitemap" method="indexIt" returnvariable="qry_sitemapIndex" root="#ini_root#" query="#qry_sitemap#">
 	<cfinvoke component="example.path.to.cfc._sitemap" method="googleSitemap" returnvariable="sitemap" root="#ini_root#" query="#qry_sitemap#">
-	cfinvoke component="example.path.to.cfc._sitemap" method="submitSitemap" url="#ini_sitemap#" returnvariable="qry_sitemap" >
+	<cfinvoke component="example.path.to.cfc._sitemap" method="submitSitemap" url="#ini_sitemap#" returnvariable="qry_sitemap" >
 
 	<cffile
     action = "write"
